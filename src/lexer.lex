@@ -24,6 +24,10 @@ extern int yyerror(std::string msg);
 [ \t\n]   { /* skip */ }
 .         { yyerror("unknown char"); }
 
+"//".*                                    { /* DO NOTHING */ }
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       { /* DO NOTHING */ }
+
+
 %%
 
 std::string token_to_string(int token, const char *lexeme) {
