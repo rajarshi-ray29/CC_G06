@@ -24,6 +24,7 @@ return !multiline_comment_stack.empty();
  
 %%
  
+ 
 "+" { return TPLUS; }
 "-" { return TDASH; }
 "*" { return TSTAR; }
