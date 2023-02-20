@@ -17,6 +17,9 @@ new
 let pqr = 2;
 #def ELVEN 11
 
-#ifdef ELVEN
+
+#ifdef ELVENFSD
 dbg pqr*2;
+#else
+dbg pqr*3;
 #endif
