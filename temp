@@ -1,1 +1,0 @@
-let text = 123 * 20 + 20 + (22 / 2) - 1;dbg text + text;let abc = 2;let x = 29; dbg x;let pqr = 2;dbg pqr*3;#endif

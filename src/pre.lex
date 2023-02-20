@@ -14,6 +14,7 @@
 %x ELIF
 %x ELIF2
 %x SKIP_ELIF
+%x SKIP_ELSE
 
 %{
 #include <string>
