@@ -7,6 +7,9 @@
 %x DEFINE
 %x DEFINE2
 %x UNDEF
+%x IFDEF
+%x IFDEF2
+%x ENDIF
 %{
 #include <string>
 #include <unordered_map>
@@ -29,6 +32,14 @@ unordered_map<string, string> map;
 <UNDEF>[a-zA-Z]+ {map.erase(yytext); return 2;}
 <UNDEF>[ \n]+ {BEGIN(INITIAL); return 2;}
 
+"#ifdef " {BEGIN(IFDEF); return 1;}
+<IFDEF>[a-zA-Z]+ {key=yytext; if(map.find(key)!=map.end()) BEGIN(IFDEF2); return 1;}
+<IFDEF>[^#a-zA-Z]+
+<IFDEF>[#a-zA-Z]+ {key = yytext; if(key=="endif") BEGIN(INITIAL); else BEGIN(IFDEF); return 1;}
+<IFDEF2>"\n" {BEGIN(INITIAL); return 1;}
+
+"#endif" {BEGIN(ENDIF); return 1;}
+<ENDIF>[\n]+ {BEGIN(INITIAL); return 1;}
 
 "/*"         BEGIN(comment);
 <comment>[^*]*        /* eat anything that's not a '*' */
