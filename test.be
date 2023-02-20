@@ -13,3 +13,10 @@ dbg abc + abc;
 #undef abc
 let abc = 2;
 new
+
+let pqr = 2;
+#def ELVEN 11
+
+#ifdef ELVEN
+dbg pqr*2;
+#endif
