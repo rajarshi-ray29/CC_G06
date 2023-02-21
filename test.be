@@ -20,6 +20,6 @@ let pqr = 2;
 
 #ifdef ELVEN123
 dbg pqr*2;
-#else
+#elif ELVEN234
 dbg pqr*3;
 #endif
