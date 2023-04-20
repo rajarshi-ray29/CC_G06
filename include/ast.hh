@@ -18,6 +18,7 @@ struct Node
         INT_LIT,
         STMTS,
         ASSN,
+        LET,
         DBG,
         IDENT,
         TERNARY
@@ -97,6 +98,20 @@ struct NodeAssn : public Node
     Node *expression;
 
     NodeAssn(std::string id, Node *expr);
+    std::string to_string();
+    llvm::Value *llvm_codegen(LLVMCompiler *compiler);
+};
+
+/*
+    Node for Let statements
+*/
+
+struct NodeLet : public Node
+{
+    std::string identifier;
+    Node *expression;
+
+    NodeLet(std::string id, Node *expr);
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };
