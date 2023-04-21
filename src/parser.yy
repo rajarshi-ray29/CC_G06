@@ -63,23 +63,6 @@ Stmt : TLET TIDENT TEQUAL Expr
             $$ = new NodeLet($2, $4);
         }
      }
-     |
-      TIDENT TEQUAL Expr
-    {
-        if(!symbol_table.contains($1)) {
-            // tried to redeclare variable, so error
-            yyerror("tried to redeclare variable.\n");
-        } else {
-            symbol_table.insert($1);
-
-            $$ = new NodeAssn($1, $3);
-        }
-    }
-    |
-    TDBG Expr
-    { 
-        $$ = new NodeDebug($2);
-    }
     |
      TIDENT TEQUAL Expr
      {

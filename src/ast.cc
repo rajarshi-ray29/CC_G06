@@ -110,7 +110,7 @@ NodeAssn::NodeAssn(std::string id, Node *expr)
 
 std::string NodeAssn::to_string()
 {
-    return "(Assign " + identifier + " " + expression->to_string() + ")";
+    return "(assign " + identifier + " " + expression->to_string() + ")";
 }
 
 NodeDebug::NodeDebug(Node *expr)
