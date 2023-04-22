@@ -23,7 +23,7 @@ struct Node
         IDENT,
         TERNARY
     } type;
-
+    std::string data_type;
     virtual std::string to_string() = 0;
     virtual llvm::Value *llvm_codegen(LLVMCompiler *compiler) = 0;
 };
@@ -82,12 +82,14 @@ struct NodeTernary : public Node
 */
 struct NodeInt : public Node
 {
-    int value;
+    long value;
 
-    NodeInt(int val);
+    NodeInt(long val);
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };
+
+
 
 /**
     Node for variable assignments
