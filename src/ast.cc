@@ -9,6 +9,23 @@ NodeBinOp::NodeBinOp(NodeBinOp::Op ope, Node *leftptr, Node *rightptr)
     op = ope;
     left = leftptr;
     right = rightptr;
+    if(left->data_type == "short" && right->data_type == "short")
+    {
+        data_type = "short";
+    }
+    else if(left->data_type == "int" && right->data_type == "int")
+    {
+        data_type = "int";
+    }
+    else if(left->data_type == "long" || right->data_type == "long")
+    {
+        data_type = "long";
+    }
+    else if((left->data_type == "int" && right->data_type=="short")||(left->data_type == "short" && right->data_type=="int"))
+    {
+        data_type = "int";
+    }
+   
 }
 
 NodeTernary::NodeTernary(NodeTernary::Op ope, Node *leftptr, Node *rightptr, Node *midptr)
@@ -54,9 +71,21 @@ std::string NodeTernary::to_string()
     return out;
 }
 
-NodeInt::NodeInt(int val)
+NodeInt::NodeInt(long val)
 {
     type = INT_LIT;
+    if(val<INT16_MAX)
+    {
+        data_type = "short";
+    }
+    else if(val<INT32_MAX)
+    {
+        data_type = "int";
+    }
+    else
+    {
+        data_type = "long";
+    }
     value = val;
 }
 
@@ -89,7 +118,7 @@ std::string NodeStmts::to_string()
     return out;
 }
 
-NodeLet::NodeLet(std::string id, Node *expr)
+NodeLet:: NodeLet(std::string id, Node *expr)
 {
     type = LET;
     identifier = id;

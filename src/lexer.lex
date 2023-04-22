@@ -21,6 +21,9 @@ extern int yyerror(std::string msg);
 "="       { return TEQUAL; }
 "dbg"     { return TDBG; }
 "let"     { return TLET; }
+"int"     {  yylval.lexeme = std::string(yytext); return TDATA; }
+"short"   {  yylval.lexeme = std::string(yytext); return TDATA; }
+"long"    {  yylval.lexeme = std::string(yytext); return TDATA; }
 [0-9]+    { yylval.lexeme = std::string(yytext); return TINT_LIT; }
 [a-zA-Z]+ { yylval.lexeme = std::string(yytext); return TIDENT; }
 [ \t\n]   { /* skip */ }
@@ -44,7 +47,8 @@ std::string token_to_string(int token, const char *lexeme) {
         
         case TDBG: s = "TDBG"; break;
         case TLET: s = "TLET"; break;
-        
+        case TDATA: s= "TDATA"; s.append("  ").append(lexeme); break;
+
         case TINT_LIT: s = "TINT_LIT"; s.append("  ").append(lexeme); break;
         case TIDENT: s = "TIDENT"; s.append("  ").append(lexeme); break;
     }
