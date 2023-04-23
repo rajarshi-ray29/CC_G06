@@ -118,16 +118,17 @@ std::string NodeStmts::to_string()
     return out;
 }
 
-NodeLet:: NodeLet(std::string id, Node *expr)
+NodeLet:: NodeLet(std::string id, std::string daty, Node *expr)
 {
     type = LET;
     identifier = id;
     expression = expr;
+    data_type = daty;
 }
 
 std::string NodeLet::to_string()
 {
-    return "(let " + identifier + " " + expression->to_string() + ")";
+    return "(let (" + identifier + " " + data_type + ") " + expression->to_string() + ")";
 }
 
 NodeAssn::NodeAssn(std::string id, Node *expr)

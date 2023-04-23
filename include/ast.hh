@@ -113,7 +113,7 @@ struct NodeLet : public Node
     std::string identifier;
     Node *expression;
 
-    NodeLet(std::string id, Node *expr);
+    NodeLet(std::string id, std::string daty, Node *expr);
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };
