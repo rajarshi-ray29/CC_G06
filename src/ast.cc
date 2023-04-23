@@ -37,6 +37,20 @@ NodeTernary::NodeTernary(NodeTernary::Op ope, Node *leftptr, Node *rightptr, Nod
     mid = midptr;
 }
 
+NodeIf::NodeIf(Node *condptr, Node *ifptr, Node *elseptr)
+{
+    type = IF;
+    cond = condptr;
+    ifstmt = ifptr;
+    elsestmt = elseptr;
+}
+
+// NodeElse::NodeElse(Node *elseptr)
+// {
+//     type = ELSE;
+//     elsestmt = elseptr;
+// }
+
 std::string
 NodeBinOp::to_string()
 {
@@ -67,6 +81,19 @@ std::string NodeTernary::to_string()
     std::string out = "(?:";
 
     out += ' ' + left->to_string() + ' ' + right->to_string() + ' ' + mid->to_string() + ')';
+
+    return out;
+}
+
+std::string NodeIf::to_string()
+{
+    std::string out = "(if " + cond->to_string() + ' ' + ifstmt->to_string();
+    if (elsestmt)
+    {
+        out += ' ' + elsestmt->to_string();
+    }
+
+    out += ')';
 
     return out;
 }
@@ -117,6 +144,7 @@ std::string NodeStmts::to_string()
 
     return out;
 }
+
 
 NodeLet:: NodeLet(std::string id, std::string daty, Node *expr)
 {
