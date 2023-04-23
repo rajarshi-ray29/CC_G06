@@ -64,6 +64,7 @@ Stmt : TLET TIDENT TCOLON TDATA TEQUAL Expr
         {
             yyerror("Type mismatch.\n");
         }
+            symbol_table.insert($2);
             $$ = new NodeLet($2,$4,$6);
      }
      |
