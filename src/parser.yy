@@ -26,11 +26,12 @@ int yyerror(std::string msg);
 }
 
 %token TPLUS TDASH TSTAR TSLASH
-%token <lexeme> TINT_LIT TIDENT 
-%token INT TLET TDBG 
-%token TSCOL TLPAREN TRPAREN TEQUAL 
+
+%token <lexeme> TINT_LIT TIDENT TDATA
+%token  TLET TDBG
+%token TSCOL TLPAREN TRPAREN TEQUAL
 %token TIF TELSE TLBRACE TRBRACE
-%token TQUESTION TCOLON 
+%token TQUESTION TCOLON
 
 %type <node> Expr Stmt
 %type <stmts> Program StmtList
@@ -53,40 +54,42 @@ StmtList : Stmt
          { $$->push_back($3); }
 	     ;
 
-Stmt : TLET TIDENT TEQUAL Expr
+Stmt : TLET TIDENT TCOLON TDATA TEQUAL Expr
      {
-        if(symbol_table.contains($2)) {
-            // tried to redeclare variable, so error
-            yyerror("tried to redeclare variable.\n");
-        } else {
-            symbol_table.insert($2);
-
-            $$ = new NodeLet($2, $4);
+        if($6->data_type =="int" && $4=="short")
+        {
+            yyerror("Type mismatch.\n");
         }
+        if($6->data_type == "long" &&( $4=="int" || $4=="short"))
+        {
+            yyerror("Type mismatch.\n");
+        }
+            $$ = new NodeLet($2,$4,$6);
      }
-    |
-     TIDENT TEQUAL Expr
-     {
+     |
+      TIDENT TEQUAL Expr
+    {
         if(!symbol_table.contains($1)) {
             // tried to redeclare variable, so error
             yyerror("tried to redeclare variable.\n");
         } else {
             symbol_table.insert($1);
-
             $$ = new NodeAssn($1, $3);
         }
-     }
-     | TDBG Expr
-     { 
+    }
+    |
+    TDBG Expr
+    { 
         $$ = new NodeDebug($2);
      }
      |
      TIF Expr TLBRACE Program TRBRACE TELSE TLBRACE Program TRBRACE
-        { $$ = new NodeIf($2, $4, $8); }
-     ;
+        { $$ = new NodeIf($2, $4, $8); };
 
 Expr : TINT_LIT               
-     { $$ = new NodeInt(stoi($1)); }
+     {
+        $$ = new NodeInt(stol($1)); 
+     }
      | TIDENT
      { 
         if(symbol_table.contains($1))

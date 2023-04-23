@@ -24,7 +24,7 @@ struct Node
         TERNARY,
         IF
     } type;
-
+    std::string data_type;
     virtual std::string to_string() = 0;
     virtual llvm::Value *llvm_codegen(LLVMCompiler *compiler) = 0;
 };
@@ -95,12 +95,14 @@ struct NodeIf : public Node
 */
 struct NodeInt : public Node
 {
-    int value;
+    long value;
 
-    NodeInt(int val);
+    NodeInt(long val);
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };
+
+
 
 /**
     Node for variable assignments
@@ -124,7 +126,7 @@ struct NodeLet : public Node
     std::string identifier;
     Node *expression;
 
-    NodeLet(std::string id, Node *expr);
+    NodeLet(std::string id, std::string daty, Node *expr);
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };

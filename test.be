@@ -1,5 +1,5 @@
-let a = 3;
-let b = 1;
+let a:int = 3;
+let b:int = 1;
 
 if a {
     dbg a;
