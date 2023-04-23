@@ -26,10 +26,11 @@ int yyerror(std::string msg);
 }
 
 %token TPLUS TDASH TSTAR TSLASH
-%token <lexeme> TINT_LIT TIDENT
-%token INT TLET TDBG
-%token TSCOL TLPAREN TRPAREN TEQUAL
-%token TQUESTION TCOLON
+%token <lexeme> TINT_LIT TIDENT 
+%token INT TLET TDBG 
+%token TSCOL TLPAREN TRPAREN TEQUAL 
+%token TIF TELSE TLBRACE TRBRACE
+%token TQUESTION TCOLON 
 
 %type <node> Expr Stmt
 %type <stmts> Program StmtList
@@ -39,7 +40,7 @@ int yyerror(std::string msg);
 %right TQUESTION TCOLON
 
 %%
-
+/* include assignment  */
 Program :                
         { final_values = nullptr; }
         | StmtList TSCOL 
@@ -60,10 +61,10 @@ Stmt : TLET TIDENT TEQUAL Expr
         } else {
             symbol_table.insert($2);
 
-            $$ = new NodeAssn($2, $4);
+            $$ = new NodeLet($2, $4);
         }
      }
-     |
+    |
      TIDENT TEQUAL Expr
      {
         if(!symbol_table.contains($1)) {
@@ -79,6 +80,9 @@ Stmt : TLET TIDENT TEQUAL Expr
      { 
         $$ = new NodeDebug($2);
      }
+     |
+     TIF Expr TLBRACE Program TRBRACE TELSE TLBRACE Program TRBRACE
+        { $$ = new NodeIf($2, $4, $8); }
      ;
 
 Expr : TINT_LIT               
@@ -102,6 +106,8 @@ Expr : TINT_LIT
      | Expr TQUESTION Expr TCOLON Expr
      { $$ = new NodeTernary(NodeTernary::TERN_OP, $1, $3, $5); }
      ;
+
+    
 
 %%
 

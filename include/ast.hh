@@ -18,9 +18,11 @@ struct Node
         INT_LIT,
         STMTS,
         ASSN,
+        LET,
         DBG,
         IDENT,
-        TERNARY
+        TERNARY,
+        IF
     } type;
 
     virtual std::string to_string() = 0;
@@ -77,6 +79,18 @@ struct NodeTernary : public Node
 };
 
 /**
+    Node for if statements
+*/
+struct NodeIf : public Node
+{
+    Node *cond, *ifstmt, *elsestmt;
+
+    NodeIf(Node *condptr, Node *ifptr, Node *elseptr);
+    std::string to_string();
+    llvm::Value *llvm_codegen(LLVMCompiler *compiler);
+};
+
+/**
     Node for integer literals
 */
 struct NodeInt : public Node
@@ -97,6 +111,20 @@ struct NodeAssn : public Node
     Node *expression;
 
     NodeAssn(std::string id, Node *expr);
+    std::string to_string();
+    llvm::Value *llvm_codegen(LLVMCompiler *compiler);
+};
+
+/*
+    Node for Let statements
+*/
+
+struct NodeLet : public Node
+{
+    std::string identifier;
+    Node *expression;
+
+    NodeLet(std::string id, Node *expr);
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };

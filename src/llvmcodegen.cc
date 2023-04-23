@@ -128,41 +128,83 @@ Value *NodeBinOp::llvm_codegen(LLVMCompiler *compiler)
 
 Value *NodeTernary::llvm_codegen(LLVMCompiler *compiler)
 {
-    Value *cond = left->llvm_codegen(compiler);
+    return nullptr;
+}
 
-    Function *func = compiler->builder.GetInsertBlock()->getParent();
+Value *NodeIf::llvm_codegen(LLVMCompiler *compiler)
+{
+    Value *CondV = cond->llvm_codegen(compiler);
+    if (!CondV)
+        return nullptr;
 
-    BasicBlock *then_bb = BasicBlock::Create(*compiler->context, "then", func);
-    BasicBlock *else_bb = BasicBlock::Create(*compiler->context, "else");
-    BasicBlock *merge_bb = BasicBlock::Create(*compiler->context, "merge");
+    // Convert condition to a bool by comparing non-equal to 0.0.
+    CondV = compiler->builder.CreateICmpNE(
+        CondV, compiler->builder.getInt32(0), "ifcond");
+    // builder.CreateRet(builder.getInt32(0));
+    Function *TheFunction = compiler->builder.GetInsertBlock()->getParent();
 
-    compiler->builder.CreateCondBr(cond, then_bb, else_bb);
+     // end of the function.
+    BasicBlock *ThenBB =
+        BasicBlock::Create(*compiler->context, "then", TheFunction);
+    BasicBlock *ElseBB = BasicBlock::Create(*compiler->context, "else");
+    BasicBlock *MergeBB = BasicBlock::Create(*compiler->context, "ifcont");
 
-    compiler->builder.SetInsertPoint(then_bb);
-    Value *then_expr = mid->llvm_codegen(compiler);
-    compiler->builder.CreateBr(merge_bb);
-    then_bb = compiler->builder.GetInsertBlock();
+    compiler->builder.CreateCondBr(CondV, ThenBB, ElseBB);
 
-    func->getBasicBlockList().push_back(else_bb);
-    compiler->builder.SetInsertPoint(else_bb);
-    Value *else_expr = right->llvm_codegen(compiler);
-    compiler->builder.CreateBr(merge_bb);
-    else_bb = compiler->builder.GetInsertBlock();
+    // Emit then value.
+    compiler->builder.SetInsertPoint(ThenBB);
 
-    func->getBasicBlockList().push_back(merge_bb);
-    compiler->builder.SetInsertPoint(merge_bb);
-    PHINode *phi = compiler->builder.CreatePHI(
-        compiler->builder.getInt32Ty(),
-        2,
-        "iftmp");
+    Value *ThenV = ifstmt->llvm_codegen(compiler);
+    if (!ThenV)
+    return nullptr;
 
-    phi->addIncoming(then_expr, then_bb);
-    phi->addIncoming(else_expr, else_bb);
+    compiler->builder.CreateBr(MergeBB);
+    // Codegen of 'Then' can change the current block, update ThenBB for the PHI.
+    ThenBB = compiler->builder.GetInsertBlock();
 
-    return phi;
+    // Emit else block.
+    TheFunction->getBasicBlockList().push_back(ElseBB);
+    
+    compiler->builder.SetInsertPoint(ElseBB);
+
+    Value *ElseV = elsestmt->llvm_codegen(compiler);
+    if (!ElseV)
+    return nullptr;
+
+    compiler->builder.CreateBr(MergeBB);
+    // codegen of 'Else' can change the current block, update ElseBB for the PHI.
+    ElseBB = compiler->builder.GetInsertBlock();
+    // Emit merge block.
+    TheFunction->getBasicBlockList().push_back(MergeBB);
+    
+    compiler->builder.SetInsertPoint(MergeBB);
+    PHINode *PN =
+        compiler->builder.CreatePHI(compiler -> builder.getInt32Ty(), 2, "iftmp");
+
+    PN->addIncoming(ThenV, ThenBB);
+    PN->addIncoming(ElseV, ElseBB);
+    return PN;
+
 }
 
 Value *NodeAssn::llvm_codegen(LLVMCompiler *compiler)
+{
+    Value *expr = expression->llvm_codegen(compiler);
+
+    IRBuilder<> temp_builder(
+        &MAIN_FUNC->getEntryBlock(),
+        MAIN_FUNC->getEntryBlock().begin());
+
+    AllocaInst *alloc = temp_builder.CreateAlloca(compiler->builder.getInt32Ty(), 0, identifier);
+
+    compiler->locals[identifier] = alloc;
+
+    return compiler->builder.CreateStore(expr, alloc);
+
+    
+}
+
+Value *NodeLet::llvm_codegen(LLVMCompiler *compiler)
 {
     Value *expr = expression->llvm_codegen(compiler);
 

@@ -20,6 +20,20 @@ NodeTernary::NodeTernary(NodeTernary::Op ope, Node *leftptr, Node *rightptr, Nod
     mid = midptr;
 }
 
+NodeIf::NodeIf(Node *condptr, Node *ifptr, Node *elseptr)
+{
+    type = IF;
+    cond = condptr;
+    ifstmt = ifptr;
+    elsestmt = elseptr;
+}
+
+// NodeElse::NodeElse(Node *elseptr)
+// {
+//     type = ELSE;
+//     elsestmt = elseptr;
+// }
+
 std::string
 NodeBinOp::to_string()
 {
@@ -49,7 +63,20 @@ std::string NodeTernary::to_string()
 {
     std::string out = "(?:";
 
-    out += ' ' + left->to_string() + ' ' + mid->to_string() + ' ' + right->to_string() + ')';
+    out += ' ' + left->to_string() + ' ' + right->to_string() + ' ' + mid->to_string() + ')';
+
+    return out;
+}
+
+std::string NodeIf::to_string()
+{
+    std::string out = "(if " + cond->to_string() + ' ' + ifstmt->to_string();
+    if (elsestmt)
+    {
+        out += ' ' + elsestmt->to_string();
+    }
+
+    out += ')';
 
     return out;
 }
@@ -89,6 +116,18 @@ std::string NodeStmts::to_string()
     return out;
 }
 
+NodeLet::NodeLet(std::string id, Node *expr)
+{
+    type = LET;
+    identifier = id;
+    expression = expr;
+}
+
+std::string NodeLet::to_string()
+{
+    return "(let " + identifier + " " + expression->to_string() + ")";
+}
+
 NodeAssn::NodeAssn(std::string id, Node *expr)
 {
     type = ASSN;
@@ -98,7 +137,7 @@ NodeAssn::NodeAssn(std::string id, Node *expr)
 
 std::string NodeAssn::to_string()
 {
-    return "(let " + identifier + " " + expression->to_string() + ")";
+    return "(assign " + identifier + " " + expression->to_string() + ")";
 }
 
 NodeDebug::NodeDebug(Node *expr)
