@@ -1,1 +1,0 @@
-let a : long = 12000;b = a;dbg b; 
