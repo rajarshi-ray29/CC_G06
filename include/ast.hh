@@ -21,7 +21,8 @@ struct Node
         LET,
         DBG,
         IDENT,
-        TERNARY
+        TERNARY,
+        IF
     } type;
     std::string data_type;
     virtual std::string to_string() = 0;
@@ -78,6 +79,18 @@ struct NodeTernary : public Node
 };
 
 /**
+    Node for if statements
+*/
+struct NodeIf : public Node
+{
+    Node *cond, *ifstmt, *elsestmt;
+
+    NodeIf(Node *condptr, Node *ifptr, Node *elseptr);
+    std::string to_string();
+    llvm::Value *llvm_codegen(LLVMCompiler *compiler);
+};
+
+/**
     Node for integer literals
 */
 struct NodeInt : public Node
@@ -113,7 +126,7 @@ struct NodeLet : public Node
     std::string identifier;
     Node *expression;
 
-    NodeLet(std::string id, Node *expr);
+    NodeLet(std::string id, std::string daty, Node *expr);
     std::string to_string();
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };

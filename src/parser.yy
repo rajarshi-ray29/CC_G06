@@ -26,9 +26,11 @@ int yyerror(std::string msg);
 }
 
 %token TPLUS TDASH TSTAR TSLASH
+
 %token <lexeme> TINT_LIT TIDENT TDATA
 %token  TLET TDBG
 %token TSCOL TLPAREN TRPAREN TEQUAL
+%token TIF TELSE TLBRACE TRBRACE
 %token TQUESTION TCOLON
 
 %type <node> Expr Stmt
@@ -62,7 +64,7 @@ Stmt : TLET TIDENT TCOLON TDATA TEQUAL Expr
         {
             yyerror("Type mismatch.\n");
         }
-            $$ = new NodeLet($2, $6);
+            $$ = new NodeLet($2,$4,$6);
      }
      |
       TIDENT TEQUAL Expr
@@ -72,7 +74,6 @@ Stmt : TLET TIDENT TCOLON TDATA TEQUAL Expr
             yyerror("tried to redeclare variable.\n");
         } else {
             symbol_table.insert($1);
-
             $$ = new NodeAssn($1, $3);
         }
     }
@@ -80,8 +81,10 @@ Stmt : TLET TIDENT TCOLON TDATA TEQUAL Expr
     TDBG Expr
     { 
         $$ = new NodeDebug($2);
-    }
-     ;
+     }
+     |
+     TIF Expr TLBRACE Program TRBRACE TELSE TLBRACE Program TRBRACE
+        { $$ = new NodeIf($2, $4, $8); };
 
 Expr : TINT_LIT               
      {
@@ -106,6 +109,8 @@ Expr : TINT_LIT
      | Expr TQUESTION Expr TCOLON Expr
      { $$ = new NodeTernary(NodeTernary::TERN_OP, $1, $3, $5); }
      ;
+
+    
 
 %%
 

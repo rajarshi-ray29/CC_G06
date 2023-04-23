@@ -1,6 +1,9 @@
-let a : long = 12000;
-b = a;
-dbg b; 
+let a:int = 3;
+let b:int = 1;
 
-// output: (begin (let a 3) (let b 1) (assign b a) (dbg b))
-// 3
+if a {
+    dbg a;
+} else {
+    dbg b;
+};
+
