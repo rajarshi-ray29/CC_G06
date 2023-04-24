@@ -1,8 +1,2 @@
-let a:int = 3;
-let b:int = 1;
-if a{
-    dbg a;
-}
-else{
-    dbg b;
-}
+let b: int = 3 * 4 + 5 - 6;
+

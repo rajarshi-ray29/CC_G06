@@ -25,7 +25,7 @@ NodeBinOp::NodeBinOp(NodeBinOp::Op ope, Node *leftptr, Node *rightptr)
     {
         data_type = "int";
     }
-   
+
 }
 
 NodeTernary::NodeTernary(NodeTernary::Op ope, Node *leftptr, Node *rightptr, Node *midptr)
@@ -54,6 +54,134 @@ NodeIf::NodeIf(Node *condptr, Node *ifptr, Node *elseptr)
 std::string
 NodeBinOp::to_string()
 {
+    // of they are both ints, we can do the operation
+
+    if(left -> data_type == "int" && right -> data_type == "int")
+    {
+        if(op == PLUS)
+        {
+            return std::to_string(std::stoi(left->to_string()) + std::stoi(right->to_string()));
+        }
+        if(op == MINUS)
+        {
+            return std::to_string(std::stoi(left->to_string()) - std::stoi(right->to_string()));
+        }
+        if(op == MULT)
+        {
+            return std::to_string(std::stoi(left->to_string()) * std::stoi(right->to_string()));
+        }
+        if(op == DIV)
+        {
+            return std::to_string(std::stoi(left->to_string()) / std::stoi(right->to_string()));
+        }
+    }
+
+    // if they are both shorts, we can do the operation
+    if(left -> data_type == "short" && right -> data_type == "short")
+    {
+        if(op == PLUS)
+        {
+            return std::to_string(std::stoi(left->to_string()) + std::stoi(right->to_string()));
+        }
+        if(op == MINUS)
+        {
+            return std::to_string(std::stoi(left->to_string()) - std::stoi(right->to_string()));
+        }
+        if(op == MULT)
+        {
+            return std::to_string(std::stoi(left->to_string()) * std::stoi(right->to_string()));
+        }
+        if(op == DIV)
+        {
+            return std::to_string(std::stoi(left->to_string()) / std::stoi(right->to_string()));
+        }
+    }
+
+    // if they are both longs, we can do the operation
+    if(left -> data_type == "long" && right -> data_type == "long")
+    {
+        if(op == PLUS)
+        {
+            return std::to_string(std::stol(left->to_string()) + std::stol(right->to_string()));
+        }
+        if(op == MINUS)
+        {
+            return std::to_string(std::stol(left->to_string()) - std::stol(right->to_string()));
+        }
+        if(op == MULT)
+        {
+            return std::to_string(std::stol(left->to_string()) * std::stol(right->to_string()));
+        }
+        if(op == DIV)
+        {
+            return std::to_string(std::stol(left->to_string()) / std::stol(right->to_string()));
+        }
+    }
+
+    // if they are int and short, we can do the operation or if they are short and int we can do the operation
+    if((left -> data_type == "int" && right -> data_type == "short") || (left -> data_type == "short" && right -> data_type == "int"))
+    {
+        if(op == PLUS)
+        {
+            return std::to_string(std::stoi(left->to_string()) + std::stoi(right->to_string()));
+        }
+        if(op == MINUS)
+        {
+            return std::to_string(std::stoi(left->to_string()) - std::stoi(right->to_string()));
+        }
+        if(op == MULT)
+        {
+            return std::to_string(std::stoi(left->to_string()) * std::stoi(right->to_string()));
+        }
+        if(op == DIV)
+        {
+            return std::to_string(std::stoi(left->to_string()) / std::stoi(right->to_string()));
+        }
+    }
+
+    // if they are long and int, we can do the operation or if they are int and long we can do the operation
+    if((left -> data_type == "long" && right -> data_type == "int") || (left -> data_type == "int" && right -> data_type == "long"))
+    {
+        if(op == PLUS)
+        {
+            return std::to_string(std::stol(left->to_string()) + std::stol(right->to_string()));
+        }
+        if(op == MINUS)
+        {
+            return std::to_string(std::stol(left->to_string()) - std::stol(right->to_string()));
+        }
+        if(op == MULT)
+        {
+            return std::to_string(std::stol(left->to_string()) * std::stol(right->to_string()));
+        }
+        if(op == DIV)
+        {
+            return std::to_string(std::stol(left->to_string()) / std::stol(right->to_string()));
+        }
+    }
+
+    // if they are long and short, we can do the operation or if they are short and long we can do the operation
+
+    if((left -> data_type == "long" && right -> data_type == "short") || (left -> data_type == "short" && right -> data_type == "long"))
+    {
+        if(op == PLUS)
+        {
+            return std::to_string(std::stol(left->to_string()) + std::stol(right->to_string()));
+        }
+        if(op == MINUS)
+        {
+            return std::to_string(std::stol(left->to_string()) - std::stol(right->to_string()));
+        }
+        if(op == MULT)
+        {
+            return std::to_string(std::stol(left->to_string()) * std::stol(right->to_string()));
+        }
+        if(op == DIV)
+        {
+            return std::to_string(std::stol(left->to_string()) / std::stol(right->to_string()));
+        }
+    }
+    
     std::string out = "(";
     switch (op)
     {
@@ -87,7 +215,18 @@ std::string NodeTernary::to_string()
 
 std::string NodeIf::to_string()
 {
-    std::string out = "(if " + cond->to_string() + ' ' + ifstmt->to_string();
+    // if condition is 0 out is only else statement
+
+    if(cond->to_string() == "0")
+    {
+        return elsestmt->to_string();
+    }
+    if(cond->to_string() == "1")
+    {
+        return ifstmt->to_string();
+    }
+    
+    std::string out = "(if-else " + cond->to_string() + ' ' + ifstmt->to_string();
     if (elsestmt)
     {
         out += ' ' + elsestmt->to_string();
@@ -145,8 +284,7 @@ std::string NodeStmts::to_string()
     return out;
 }
 
-
-NodeLet:: NodeLet(std::string id, std::string daty, Node *expr)
+NodeLet::NodeLet(std::string id, std::string daty, Node *expr)
 {
     type = LET;
     identifier = id;

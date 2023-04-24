@@ -26,12 +26,11 @@ int yyerror(std::string msg);
 }
 
 %token TPLUS TDASH TSTAR TSLASH
-
 %token <lexeme> TINT_LIT TIDENT TDATA
-%token  TLET TDBG
-%token TSCOL TLPAREN TRPAREN TEQUAL
+%token TLET TDBG 
+%token TSCOL TLPAREN TRPAREN TEQUAL 
 %token TIF TELSE TLBRACE TRBRACE
-%token TQUESTION TCOLON
+%token TQUESTION TCOLON 
 
 %type <node> Expr Stmt
 %type <stmts> Program StmtList
@@ -75,6 +74,7 @@ Stmt : TLET TIDENT TCOLON TDATA TEQUAL Expr
             yyerror("tried to redeclare variable.\n");
         } else {
             symbol_table.insert($1);
+
             $$ = new NodeAssn($1, $3);
         }
     }
@@ -82,15 +82,14 @@ Stmt : TLET TIDENT TCOLON TDATA TEQUAL Expr
     TDBG Expr
     { 
         $$ = new NodeDebug($2);
-     }
+    }
      |
      TIF Expr TLBRACE Program TRBRACE TELSE TLBRACE Program TRBRACE
-        { $$ = new NodeIf($2, $4, $8); };
+        { $$ = new NodeIf($2, $4, $8); }
+     ;
 
 Expr : TINT_LIT               
-     {
-        $$ = new NodeInt(stol($1)); 
-     }
+     { $$ = new NodeInt(stoi($1)); }
      | TIDENT
      { 
         if(symbol_table.contains($1))

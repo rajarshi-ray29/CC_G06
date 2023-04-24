@@ -102,8 +102,6 @@ struct NodeInt : public Node
     llvm::Value *llvm_codegen(LLVMCompiler *compiler);
 };
 
-
-
 /**
     Node for variable assignments
 */
